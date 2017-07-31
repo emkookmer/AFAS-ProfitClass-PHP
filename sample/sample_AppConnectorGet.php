@@ -1,13 +1,14 @@
 <?php
 
 namespace iPublications\Profit;
+
 use \iPublications\Profit\Connector;
 use \iPublications\Profit\ConnectorFilter;
 use \iPublications\Profit\Connection;
 use \iPublications\Profit\AppConnectorGet;
 use \Exception;
 
-include_once (dirname(__FILE__) . '/../vendor/autoload.php');
+include_once(dirname(__FILE__) . '/../vendor/autoload.php');
 
 $c = new Connection;
 $c->SetTargetURL('https://deserver:8080/ProfitServices/GetConnector.asmx');
@@ -17,17 +18,17 @@ $c->SetTimeout(10);
  * voor AFAS profit zelf op te geven, zodat dit niet meer hoeft op
  * GetConnector niveau; deze waarden gelden vervolgens voor alle connectoren
  * waarvoor het connectie-object geldt.
- * 		$c->SetSoapCallUsername('xxxx');
- * 		$c->SetSoapCallPassword('yyyy');
- * 		$c->SetSoapCallEnvironment('zzzz');
+ *        $c->SetSoapCallUsername('xxxx');
+ *        $c->SetSoapCallPassword('yyyy');
+ *        $c->SetSoapCallEnvironment('zzzz');
  **/
 
 /**
  * $c->SetTargetURL('https://xxxxxx:yyyyyyyy@profitweb.afasonline.com/ProfitServices/GetConnector.asmx');
  * > When no auth in URL (or when NTLM, domain cannot be passed in URL)
- * 		$c->SetUsername('xxxxxxxx');
- * 		$c->SetPassword('*****');
- * 		$c->SetAuthDomain('AOL');
+ *        $c->SetUsername('xxxxxxxx');
+ *        $c->SetPassword('*****');
+ *        $c->SetAuthDomain('AOL');
  **/
 
 /**
@@ -60,8 +61,8 @@ $g->SetRequiredFields(array('CoId', 'Co', 'DbId'));
  * en "indien hoger getal: OF relatie t.o.v. eerder lager en hoger getal".
  * De 2e index is vervolgens het veld, een pipe | en het filtertype:
  *
- * 		$filter[0]["Co|" . ConnectorFilter::LIKE] = 'N%';
- * 		$g->SetFilter($filter);
+ *        $filter[0]["Co|" . ConnectorFilter::LIKE] = 'N%';
+ *        $g->SetFilter($filter);
  **/
 
 // All debugging info
@@ -71,42 +72,41 @@ $g->SetRequiredFields(array('CoId', 'Co', 'DbId'));
 // 		print_r($g->GetFilter());
 
 try {
-	/**
-	 * Gebruik -1 en -1 voor geen skip/take, en dus het ophalen van alle waarden.
-	 **/
-	$g->SetTake(10);
-	$g->SetSkip(10);
-	$g->SetSorting('Ouderdom', AppConnectorGet::SORT_DESC);
+    /**
+     * Gebruik -1 en -1 voor geen skip/take, en dus het ophalen van alle waarden.
+     **/
+    $g->SetTake(10);
+    $g->SetSkip(10);
+    $g->SetSorting('Ouderdom', AppConnectorGet::SORT_DESC);
 
-	$g->Execute();
+    $g->Execute();
 
-	echo $g->GetConnectorId() . ' results: ' . PHP_EOL;
-	echo count($g->GetResults());
+    echo $g->GetConnectorId() . ' results: ' . PHP_EOL;
+    echo count($g->GetResults());
 
-	echo PHP_EOL;
-	echo "FIELDS:";
-	echo PHP_EOL;
+    echo PHP_EOL;
+    echo "FIELDS:";
+    echo PHP_EOL;
 
-	print_r($g->GetFields());
-	print_r($g->GetResults());
-}
-catch (Exception $e){
-	echo "Caught 'Exception \$e' " . PHP_EOL;
-	echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
-	echo PHP_EOL;
+    print_r($g->GetFields());
+    print_r($g->GetResults());
+} catch (Exception $e) {
+    echo "Caught 'Exception \$e' " . PHP_EOL;
+    echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
+    echo PHP_EOL;
 
-	/**
-	 * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
-	 * basisinformatie is beschikbaar, detailinformatie is
-	 * te vinden in het AFAS Profit omgevingslogboek.
-	 **/
-	if($e->GetCode() == 5){
-		echo PHP_EOL;
-		echo "ANTA-ERROR:";
-		echo PHP_EOL;
-		print_r($g->ANTAError());
-		echo PHP_EOL;
-	}
+    /**
+     * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
+     * basisinformatie is beschikbaar, detailinformatie is
+     * te vinden in het AFAS Profit omgevingslogboek.
+     **/
+    if ($e->GetCode() == 5) {
+        echo PHP_EOL;
+        echo "ANTA-ERROR:";
+        echo PHP_EOL;
+        print_r($g->ANTAError());
+        echo PHP_EOL;
+    }
 }
 
 echo PHP_EOL;

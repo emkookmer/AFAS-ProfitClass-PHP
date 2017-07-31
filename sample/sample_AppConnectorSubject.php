@@ -1,12 +1,13 @@
 <?php
 
 namespace iPublications\Profit;
+
 use \iPublications\Profit\Connector;
 use \iPublications\Profit\Connection;
 use \iPublications\Profit\AppConnectorSubject;
 use \Exception;
 
-include_once (dirname(__FILE__) . '/../vendor/autoload.php');
+include_once(dirname(__FILE__) . '/../vendor/autoload.php');
 
 $c = new Connection;
 $c->SetTargetURL('https://12345.afasonlineconnector.nl/ProfitServices/');
@@ -15,9 +16,9 @@ $c->SetSoapCallToken('<token><version>1</version><data>39F88060405C7BAA9CA6D9099
 /**
  * $c->SetTargetURL('https://xxxxxx:yyyyyyyy@profitweb.afasonline.com/ProfitServices/GetConnector.asmx');
  * > When no auth in URL (or when NTLM, domain cannot be passed in URL)
- * 		$c->SetUsername('xxxxxxxx');
- * 		$c->SetPassword('*****');
- * 		$c->SetAuthDomain('AOL');
+ *        $c->SetUsername('xxxxxxxx');
+ *        $c->SetPassword('*****');
+ *        $c->SetAuthDomain('AOL');
  **/
 
 // $c->SetUsername('ddd');
@@ -52,34 +53,32 @@ $g = new AppConnectorSubject(clone $c);
 //	print_r($g->GetSoapRequestHeaders());
 
 try {
-	//print_r($g->Execute(5583)); // Id van dossieritem, hoeft niet, mag ook direct in de Results Getter
+    //print_r($g->Execute(5583)); // Id van dossieritem, hoeft niet, mag ook direct in de Results Getter
 
-	$data = $g->GetResults(95178,'E86564E04A7711B3E899CE93133BF614');
+    $data = $g->GetResults(95178, 'E86564E04A7711B3E899CE93133BF614');
 
-	echo "OK :) Bestand ontvangen, length: " . strlen($data);
-	echo $data;
-	file_put_contents("/Users/wrw/Desktop/output.jpg", $data);
-  // En als we het wilen opslaan:
-  // file_put_contents('/Users/Wietse/Desktop/test.png', $g->Getresults());
+    echo "OK :) Bestand ontvangen, length: " . strlen($data);
+    echo $data;
+    file_put_contents("/Users/wrw/Desktop/output.jpg", $data);
+    // En als we het wilen opslaan:
+    // file_put_contents('/Users/Wietse/Desktop/test.png', $g->Getresults());
+} catch (Exception $e) {
+    echo "Caught 'Exception \$e' " . PHP_EOL;
+    echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
+    echo PHP_EOL;
 
-}
-catch (Exception $e){
-	echo "Caught 'Exception \$e' " . PHP_EOL;
-	echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
-	echo PHP_EOL;
-
-	/**
-	 * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
-	 * basisinformatie is beschikbaar, detailinformatie is
-	 * te vinden in het AFAS Profit omgevingslogboek.
-	 **/
-	if($e->GetCode() == 5){
-		echo PHP_EOL;
-		echo "ANTA-ERROR:";
-		echo PHP_EOL;
-		print_r($g->ANTAError());
-		echo PHP_EOL;
-	}
+    /**
+     * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
+     * basisinformatie is beschikbaar, detailinformatie is
+     * te vinden in het AFAS Profit omgevingslogboek.
+     **/
+    if ($e->GetCode() == 5) {
+        echo PHP_EOL;
+        echo "ANTA-ERROR:";
+        echo PHP_EOL;
+        print_r($g->ANTAError());
+        echo PHP_EOL;
+    }
 }
 
 echo PHP_EOL;

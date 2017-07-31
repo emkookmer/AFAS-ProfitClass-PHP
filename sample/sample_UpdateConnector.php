@@ -1,20 +1,21 @@
 <?php
 
 namespace iPublications\Profit;
+
 use \iPublications\Profit\Connector;
 use \iPublications\Profit\ConnectorFilter;
 use \iPublications\Profit\Connection;
 use \iPublications\Profit\GetConnector;
 use \Exception;
 
-include_once (dirname(__FILE__) . '/../vendor/autoload.php');
+include_once(dirname(__FILE__) . '/../vendor/autoload.php');
 
 $c = new Connection;
 $c->SetTargetURL('http://deserver:8080/ProfitServices');
 $c->SetTimeout(20);
 /**
  * Het connectie-object kan ook gebruikt worden om alvast de credentials
- * voor AFAS profit zelf op te geven, zodat dit niet meer hoeft op 
+ * voor AFAS profit zelf op te geven, zodat dit niet meer hoeft op
  * GetConnector niveau; deze waarden gelden vervolgens voor alle connectoren
  * waarvoor het connectie-object geldt.
  *    $c->SetSoapCallUsername('xxxx');
@@ -39,12 +40,12 @@ $c->SetTimeout(20);
  * argument worden opgegeven voor het meegeven van het connectie-object.
  * Het oorspronkelijke connectie-object blijft dan ongewijzigd, en is opnieuw
  * (eventueel gecloned) herbruikbaar voor volgende calls.
- **/ 
+ **/
 $g = new UpdateConnector(clone $c);
 
 /**
  * Onderstaande waarden (User, Pass, Environment) zijn niet nodig
- * wanneer op het connectie-object de SetSoapCallxxxxx setters 
+ * wanneer op het connectie-object de SetSoapCallxxxxx setters
  * reeds zijn gebruikt, en hiervan niet hoeft te worden afgeweken.
  **/
 $g->SetEnvironmentId('IPUB');
@@ -80,26 +81,25 @@ $g->SetXML('
 //	print_r($g->GetSoapRequestHeaders());
 
 try {
-	print_r($g->Execute());
-	echo "OK :)";
-}
-catch (Exception $e){
-	echo "Caught 'Exception \$e' " . PHP_EOL;
-	echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
-	echo PHP_EOL;
+    print_r($g->Execute());
+    echo "OK :)";
+} catch (Exception $e) {
+    echo "Caught 'Exception \$e' " . PHP_EOL;
+    echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
+    echo PHP_EOL;
 
-  /**
-   * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
-   * basisinformatie is beschikbaar, detailinformatie is
-   * te vinden in het AFAS Profit omgevingslogboek.
-   **/
-	if($e->GetCode() == 5){
-		echo PHP_EOL;
-		echo "ANTA-ERROR:";
-		echo PHP_EOL;
-		print_r($g->ANTAError());
-		echo PHP_EOL;
-	}
+    /**
+     * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
+     * basisinformatie is beschikbaar, detailinformatie is
+     * te vinden in het AFAS Profit omgevingslogboek.
+     **/
+    if ($e->GetCode() == 5) {
+        echo PHP_EOL;
+        echo "ANTA-ERROR:";
+        echo PHP_EOL;
+        print_r($g->ANTAError());
+        echo PHP_EOL;
+    }
 }
 
 echo PHP_EOL;

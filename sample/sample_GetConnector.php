@@ -1,13 +1,14 @@
 <?php
 
 namespace iPublications\Profit;
+
 use \iPublications\Profit\Connector;
 use \iPublications\Profit\ConnectorFilter;
 use \iPublications\Profit\Connection;
 use \iPublications\Profit\GetConnector;
 use \Exception;
 
-include_once (dirname(__FILE__) . '/../vendor/autoload.php');
+include_once(dirname(__FILE__) . '/../vendor/autoload.php');
 
 $c = new Connection;
 $c->SetTargetURL('https://deserver/ProfitServices/GetConnector.asmx');
@@ -17,17 +18,17 @@ $c->SetTimeout(10);
  * voor AFAS profit zelf op te geven, zodat dit niet meer hoeft op
  * GetConnector niveau; deze waarden gelden vervolgens voor alle connectoren
  * waarvoor het connectie-object geldt.
- * 		$c->SetSoapCallUsername('xxxx');
- * 		$c->SetSoapCallPassword('yyyy');
- * 		$c->SetSoapCallEnvironment('zzzz');
+ *        $c->SetSoapCallUsername('xxxx');
+ *        $c->SetSoapCallPassword('yyyy');
+ *        $c->SetSoapCallEnvironment('zzzz');
  **/
 
 /**
  * $c->SetTargetURL('https://xxxxxx:yyyyyyyy@profitweb.afasonline.com/ProfitServices/GetConnector.asmx');
  * > When no auth in URL (or when NTLM, domain cannot be passed in URL)
- * 		$c->SetUsername('xxxxxxxx');
- * 		$c->SetPassword('*****');
- * 		$c->SetAuthDomain('AOL');
+ *        $c->SetUsername('xxxxxxxx');
+ *        $c->SetPassword('*****');
+ *        $c->SetAuthDomain('AOL');
  **/
 
 /**
@@ -72,8 +73,8 @@ $g->SetRequiredFields(array('CoId', 'Co', 'DbId'));
  * en "indien hoger getal: OF relatie t.o.v. eerder lager en hoger getal".
  * De 2e index is vervolgens het veld, een pipe | en het filtertype:
  *
- * 		$filter[0]["Co|" . ConnectorFilter::LIKE] = 'N%';
- * 		$g->SetFilter($filter);
+ *        $filter[0]["Co|" . ConnectorFilter::LIKE] = 'N%';
+ *        $g->SetFilter($filter);
  **/
 
 $filter = new ConnectorFilter;
@@ -89,57 +90,56 @@ $g->SetFilter($filter);
 
 /**
  * Gaat het echt helemaal niet goed? Debugging informatie is beschikbaar met:
- * 		print_r($g->GetRequiredElements());
- * 		print_r($g->GetSoapRequestBody());
- * 		print_r($g->GetSoapRequestHeaders());
- * 		print_r($g->GetFilter());
+ *        print_r($g->GetRequiredElements());
+ *        print_r($g->GetSoapRequestBody());
+ *        print_r($g->GetSoapRequestHeaders());
+ *        print_r($g->GetFilter());
  **/
 
 try {
-	/**
-	 * Skip/Take maakt het mogelijk een deel van de dataset op te halen,
-	 * om te voorkomen dat heel veel data in 1 request moet worden
-	 * opgehaald. Skip is het aantal over te slaan regels, Take is het
-	 * aantal op te halen regels. Wanneer in een Loop gebruikt en het
-	 * aantal resultaatregels < take, heb je het einde van de dataset bereikt.
-	 **/
-	$g->SetSkip(0);
-	$g->SetTake(10);
-	$g->SetSorting('CoId', GetConnector::SORT_DESC);
+    /**
+     * Skip/Take maakt het mogelijk een deel van de dataset op te halen,
+     * om te voorkomen dat heel veel data in 1 request moet worden
+     * opgehaald. Skip is het aantal over te slaan regels, Take is het
+     * aantal op te halen regels. Wanneer in een Loop gebruikt en het
+     * aantal resultaatregels < take, heb je het einde van de dataset bereikt.
+     **/
+    $g->SetSkip(0);
+    $g->SetTake(10);
+    $g->SetSorting('CoId', GetConnector::SORT_DESC);
 
-	/**
-	 * Voer de daadwerkelijke connector uit, hier gaat de verwerkingstijd
-	 * in zitten. Hoe meer data, hoe langer de Execute.
-	 **/
-	$g->Execute();
+    /**
+     * Voer de daadwerkelijke connector uit, hier gaat de verwerkingstijd
+     * in zitten. Hoe meer data, hoe langer de Execute.
+     **/
+    $g->Execute();
 
-	echo $g->GetConnectorId() . ' results: ' . PHP_EOL;
-	echo count($g->GetResults());
+    echo $g->GetConnectorId() . ' results: ' . PHP_EOL;
+    echo count($g->GetResults());
 
-	echo PHP_EOL;
-	echo "FIELDS:";
-	echo PHP_EOL;
+    echo PHP_EOL;
+    echo "FIELDS:";
+    echo PHP_EOL;
 
-	print_r($g->GetFields());
-	print_r($g->GetResults());
-}
-catch (Exception $e){
-	echo "Caught 'Exception \$e' " . PHP_EOL;
-	echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
-	echo PHP_EOL;
+    print_r($g->GetFields());
+    print_r($g->GetResults());
+} catch (Exception $e) {
+    echo "Caught 'Exception \$e' " . PHP_EOL;
+    echo "  > " . $e->GetCode() . ' - ' . $e->GetMessage();
+    echo PHP_EOL;
 
-	/**
-	 * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
-	 * basisinformatie is beschikbaar, detailinformatie is
-	 * te vinden in het AFAS Profit omgevingslogboek.
-	 **/
-	if($e->GetCode() == 5){
-		echo PHP_EOL;
-		echo "ANTA-ERROR:";
-		echo PHP_EOL;
-		print_r($g->ANTAError());
-		echo PHP_EOL;
-	}
+    /**
+     * ErrorCode 5 = een door AFAS Profit gegeven foutmelding,
+     * basisinformatie is beschikbaar, detailinformatie is
+     * te vinden in het AFAS Profit omgevingslogboek.
+     **/
+    if ($e->GetCode() == 5) {
+        echo PHP_EOL;
+        echo "ANTA-ERROR:";
+        echo PHP_EOL;
+        print_r($g->ANTAError());
+        echo PHP_EOL;
+    }
 }
 
 echo PHP_EOL;

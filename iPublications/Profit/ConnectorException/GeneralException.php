@@ -1,6 +1,7 @@
 <?php
 
 namespace iPublications\Profit\ConnectorException;
+
 use \Exception;
 
 /**
@@ -13,6 +14,7 @@ use \Exception;
  * @license Closed Source, contact iPublications
  * @package iPublicationsProfitV3
  * @category ExceptionHandling
-*/
-
-class GeneralException extends Exception {}
+ */
+class GeneralException extends Exception
+{
+}
